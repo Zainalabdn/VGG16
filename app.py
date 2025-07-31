@@ -3,7 +3,6 @@ import numpy as np
 from PIL import Image
 import tensorflow as tf
 from keras.metrics import Precision, Recall
-import cv2
 import gdown
 import os
 
@@ -25,7 +24,7 @@ class F1Score(tf.keras.metrics.Metric):
     def reset_states(self):
         self.precision.reset_states()
         self.recall.reset_states()
-        
+
 # Download sekali saat pertama kali dijalankan
 model_path = "vgg16_model.h5"
 if not os.path.exists(model_path):
