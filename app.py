@@ -3,11 +3,29 @@ import numpy as np
 from PIL import Image
 import tensorflow as tf
 from keras.metrics import Precision, Recall
-from keras.metrics import F1Score
 import cv2
 import gdown
 import os
 
+class F1Score(tf.keras.metrics.Metric):
+    def __init__(self, name="f1_score", **kwargs):
+        super(F1Score, self).__init__(name=name, **kwargs)
+        self.precision = tf.keras.metrics.Precision()
+        self.recall = tf.keras.metrics.Recall()
+
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        self.precision.update_state(y_true, y_pred, sample_weight)
+        self.recall.update_state(y_true, y_pred, sample_weight)
+
+    def result(self):
+        p = self.precision.result()
+        r = self.recall.result()
+        return 2 * ((p * r) / (p + r + tf.keras.backend.epsilon()))
+
+    def reset_states(self):
+        self.precision.reset_states()
+        self.recall.reset_states()
+        
 # Download sekali saat pertama kali dijalankan
 model_path = "vgg16_model.h5"
 if not os.path.exists(model_path):
@@ -16,8 +34,8 @@ if not os.path.exists(model_path):
 model = tf.keras.models.load_model(
     model_path,
     custom_objects={
-        "Precision": Precision,
-        "Recall": Recall,
+        "Precision": tf.keras.metrics.Precision,
+        "Recall": tf.keras.metrics.Recall,
         "F1Score": F1Score
     }
 )
