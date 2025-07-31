@@ -30,14 +30,7 @@ model_path = "vgg16_model.h5"
 if not os.path.exists(model_path):
     gdown.download("https://drive.google.com/uc?id=1DJBGGLGVinkBD5fs7aPn5toXUdPC1bwr", model_path, quiet=False)
 
-model = tf.keras.models.load_model(
-    model_path,
-    custom_objects={
-        "Precision": tf.keras.metrics.Precision,
-        "Recall": tf.keras.metrics.Recall,
-        "F1Score": F1Score
-    }
-)
+model = tf.keras.models.load_model(model_path)
 
 # Label mapping
 class_names = ["healthy", "bean_rust", "angular_leaf_spot"]  # ganti sesuai label kamu
