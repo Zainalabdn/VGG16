@@ -2,16 +2,25 @@ import streamlit as st
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+from keras.metrics import Precision, Recall
+from keras.metrics import F1Score
 import cv2
 import gdown
 import os
 
 # Download sekali saat pertama kali dijalankan
-model_path = "vgg16_model.keras"
+model_path = "vgg16_model.h5"
 if not os.path.exists(model_path):
-    gdown.download("https://drive.google.com/uc?id=1NR-wrxl9oavJqRwEENLO0v3XZ8SqHE2I", model_path, quiet=False)
+    gdown.download("https://drive.google.com/uc?id=/1DJBGGLGVinkBD5fs7aPn5toXUdPC1bwr", model_path, quiet=False)
 
-model = tf.keras.models.load_model(model_path)
+model = tf.keras.models.load_model(
+    model_path,
+    custom_objects={
+        "Precision": Precision,
+        "Recall": Recall,
+        "F1Score": F1Score
+    }
+)
 
 # Label mapping
 class_names = ["healthy", "bean_rust", "angular_leaf_spot"]  # ganti sesuai label kamu
@@ -46,3 +55,4 @@ if uploaded_file is not None:
     for i, prob in enumerate(prediction[0]):
         st.markdown(f"<small>{class_names[i]}: {prob*100:.2f}%</small>", unsafe_allow_html=True)
         st.progress(float(prob))
+

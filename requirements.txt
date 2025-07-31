@@ -4,3 +4,4 @@ opencv-python-headless
 numpy==1.23.5
 Pillow
 gdown
+keras==2.11
